@@ -1,0 +1,152 @@
+---
+title: "Changes in wet, lean, and lipid mass among ECB with different diapause genotypes"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+## Libraries 
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(readxl)
+library(nlme)
+library(lme4)
+library(lmerTest)
+library(ez)
+library(lsr)
+library(MASS)
+library(doBy)
+```
+
+### Dataset: data1
+### Data calling and manipulation to prepare the dataset for analysis
+```{r}
+data <- read_excel("~/GitHub/ECB_mass_measures/data/raw/Respirometry/Respir.xlsx")
+
+str(data)
+data$strain<-as.factor(data$strain) #set strain as ind var
+data$treat<-as.factor(data$treat) #set treat as factor as ind var
+data$stage<-as.factor(data$stage)
+
+data1=data%>%
+  filter(syringe!="Blank Control") %>% 
+  filter(VCO2!="NA") %>% 
+  dplyr::select(stage,strain,treat,Tray,day,co2_hourly,mass) %>% 
+  filter(stage=="L")%>%
+  filter(treat=="1" | treat=="2") %>% 
+  filter(Tray=="16,23 1228"|Tray=="12,23 1228"|Tray=="16,23 0208"|Tray=="12,23 0208") %>% 
+  filter(mass!=0) %>% 
+  mutate(co2massmin=co2_hourly/60/mass)
+unique(data1$stage)
+unique(data1$treat)
+unique(data1$Tray)
+str(data1)
+#view(data1)
+write.csv(data1, "~/GitHub/ECB_mass_measures/data/processed/data1_ECB_MASSmeasures_PEAK_WET_MASS.csv")
+```
+
+### Dataset: data2 thru data5
+### Ploting CO2 production of larvae across each treatment combination weighted by mass
+```{r}
+data2=data1
+## Plot of CO2 production of BE strain in short vs long day conditions 
+ggplot(data=data2,aes(x=day,y=co2massmin,group=treat, color=treat))+
+  facet_grid(treat~strain)+
+  stat_summary(fun.y=mean, geom="line",shape=1,size=1)+
+  stat_summary(fun.y=mean, geom="point",shape=19,size=2)+
+  stat_summary(fun.data=mean_se, geom="errorbar", width=0.05,size=1,shape=21) +
+  theme(axis.text.x  = element_text(vjust=0.5, size=16),axis.text.y  = element_text(vjust=0.5, size=16))+
+  scale_x_continuous(breaks = seq(0, 40, by=5), limits=c(0,40))+
+  scale_color_manual(values=c("1"="pink","2"="black"))+
+  ggtitle("Change in CO2 Production")+
+  ylab("Wet Mass")+xlab("Day")  
+
+
+
+
+## Plot of CO2 production of each strain in short day conditions 
+data3=data1 %>% 
+  filter(treat=="1")
+ggplot(data=data3,aes(x=day,y=co2massmin,group=strain,color=strain))+
+  stat_summary(fun.y=mean, geom="line",shape=25,size=1)+
+  stat_summary(fun.y=mean, geom="point",shape=19,size=2)+
+  stat_summary(fun.data=mean_se, geom="errorbar", width=0.05,size=1,shape=21) +
+  theme(axis.text.x  = element_text(vjust=0.5, size=16),axis.text.y  = element_text(vjust=0.5, size=16))+
+  scale_x_continuous(breaks = seq(0, 40, by=5), limits=c(0,40))+
+  scale_color_manual(values=c("UZ"="purple","BE"="black"))+
+  ggtitle("Change in CO2 Production: During Diapause")+
+  ylab("Wet Mass")+xlab("Day")
+
+
+
+## Plot of CO2 production of each strain in=long day conditions 
+data4=data1 %>% 
+  filter(treat=="2")
+ggplot(data=data4,aes(x=day,y=co2massmin,group=strain,color=strain))+
+  stat_summary(fun.y=mean, geom="line",shape=25,size=1)+
+  stat_summary(fun.y=mean, geom="point",shape=19,size=2)+
+  stat_summary(fun.data=mean_se, geom="errorbar", width=0.05,size=1,shape=21) +
+  theme(axis.text.x  = element_text(vjust=0.5, size=16),axis.text.y  = element_text(vjust=0.5, size=16))+
+  scale_x_continuous(breaks = seq(0, 10, by=5), limits=c(0,10))+
+  scale_color_manual(values=c("UZ"="purple","BE"="black"))+
+  ggtitle("Change in CO2 Production: During Non-Diapause")+
+  ylab("Wet Mass")+xlab("Day")
+
+
+## Plot of CO2 production of UZ strain in short vs long day conditions 
+data5=data1 %>% 
+  filter(strain=="UZ")
+ggplot(data=data5,aes(x=day,y=co2massmin,group=treat,color=treat))+
+  stat_summary(fun.y=mean, geom="line",shape=25,size=1)+
+  stat_summary(fun.y=mean, geom="point",shape=19,size=2)+
+  stat_summary(fun.data=mean_se, geom="errorbar", width=0.05,size=1,shape=21) +
+  theme(axis.text.x  = element_text(vjust=0.5, size=16),axis.text.y  = element_text(vjust=0.5, size=16))+
+  scale_x_continuous(breaks = seq(0, 40, by=5), limits=c(0,40))+
+  scale_color_manual(values=c("1"="pink","2"="black"))+
+  ggtitle("Change in CO2 Production: UZ Strain")+
+  ylab("Wet Mass")+xlab("Day")
+
+
+## Plot of CO2 production of BE strain in short vs long day conditions 
+data5=data1 %>% 
+  filter(strain=="BE")
+ggplot(data=data5,aes(x=day,y=co2massmin,group=treat,color=treat))+
+  stat_summary(fun.y=mean, geom="line",shape=25,size=1)+
+  stat_summary(fun.y=mean, geom="point",shape=19,size=2)+
+  stat_summary(fun.data=mean_se, geom="errorbar", width=0.05,size=1,shape=21) +
+  theme(axis.text.x  = element_text(vjust=0.5, size=16),axis.text.y  = element_text(vjust=0.5, size=16))+
+  scale_x_continuous(breaks = seq(0, 40, by=5), limits=c(0,40))+
+  scale_color_manual(values=c("1"="pink","2"="black"))+
+  ggtitle("Change in CO2 Production: BE Strain")+
+  ylab("Wet Mass")+xlab("Day")
+  
+
+write.csv(data2, "~/GitHub/ECB_mass_measures/data/processed/data1_ECB_MASSmeasures_PEAK_WET_MASS.csv")
+write.csv(data3, "~/GitHub/ECB_mass_measures/data/processed/data1_ECB_MASSmeasures_PEAK_WET_MASS.csv")
+write.csv(data4, "~/GitHub/ECB_mass_measures/data/processed/data1_ECB_MASSmeasures_PEAK_WET_MASS.csv")
+write.csv(data5, "~/GitHub/ECB_mass_measures/data/processed/data1_ECB_MASSmeasures_PEAK_WET_MASS.csv")
+```
+
+```{r}
+## Plot of wet mass peak of BE and UZ strains in short day conditions
+ggplot(data=dataBEUZmass12,aes(x=day,y=mass,color=strain))+
+  stat_summary(fun.y=mean, geom="line",shape=25,size=1)+
+  stat_summary(fun.y=mean, geom="point",shape=19,size=2)+
+  stat_summary(fun.data=mean_se, geom="errorbar", width=0.05,size=1,shape=21) +
+  stat_summary(fun.data=mean_se, geom="errorbar", width=0.05,size=1,shape=21) +
+  theme(axis.text.x = element_text(vjust=0.5, size=16),
+        axis.text.y  = element_text(vjust=0.5, size=16))+
+  scale_x_continuous(breaks = seq(0, 40, by=5), limits=c(0,40))+
+  ggtitle("Change in Wet Mass Production: Short Day")+
+  ylab("Wet Mass")+xlab("Day")
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.

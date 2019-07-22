@@ -1,0 +1,53 @@
+---
+title: "diapdiff"
+author: "James Brown"
+date: "4/15/2019"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+````{r}
+library(readxl)
+library(ggplot2)
+library(nlme)
+library(lme4)
+library(lmerTest)
+library(ez)
+library(lsr)
+library(dplyr)
+library(tidyr)
+library(MASS)
+library(doBy)
+library(plyr)
+library(numDeriv)
+
+##PC
+#data=read_excel("/Users/jbrown/Documents/GitHub/Lipid_Quantification/Data/Extraction Samples JLM.xlsx",sheet = "CONTSAMPdf")
+
+
+##MAC
+## reading in the data and looking at its structure
+data=read_excel("/Users/JamesB/Google Drive/Graduate School/Self_JamesTBrown/GitHub/Masters_Thesis/Thesis_Images/diapdiff.xlsx", sheet = "Sheet1")
+data=gather(data,genotype,measure,long:short)
+```
+
+```{r}
+ggplot(data=data,aes(x=day,y=measure,color=genotype))+
+  stat_summary(aes(y = measure), geom="line", size=1)+
+  stat_summary(aes(y = measure), geom="point", size=2)+
+  scale_color_manual(values=c(long="purple",short="orange"))
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

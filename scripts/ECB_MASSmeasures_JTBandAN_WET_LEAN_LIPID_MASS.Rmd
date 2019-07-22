@@ -10,7 +10,6 @@ Try executing this chunk by clicking the *Run* button within the chunk or by pla
 
 ## Libraries 
 ```{r message=FALSE, warning=FALSE}
-install.packages("tidyverse")
 library(tidyverse)
 library(readxl)
 library(ggplot2)

@@ -25,12 +25,12 @@ library(doBy)
 ### Dataset: data1
 ### Data calling and manipulation to prepare the dataset for analysis
 ```{r}
-data <- read_excel("~/GitHub/ECB_mass_measures/data/raw/Respirometry/Respir.xlsx")
+data = read_excel("~/Google Drive/Graduate School/Self_JamesTBrown/GitHub/ECB_mass_measures/data/raw/Respirometry/Respir.xlsx")
 
 str(data)
 data$strain<-as.factor(data$strain) #set strain as ind var
 data$treat<-as.factor(data$treat) #set treat as factor as ind var
-data$stage<-as.factor(data$stage)
+data$stage<-as.factor(data$stage) #set the stage as a independent factor
 
 data1=data%>%
   filter(syringe!="Blank Control") %>% 
@@ -46,7 +46,7 @@ unique(data1$treat)
 unique(data1$Tray)
 str(data1)
 #view(data1)
-write.csv(data1, "~/GitHub/ECB_mass_measures/data/processed/data1_ECB_MASSmeasures_PEAK_WET_MASS.csv")
+write.csv(data1, "/Users/JamesB/Google Drive/Graduate School/Self_JamesTBrown/GitHub/ECB_mass_measures/data/processed/data1_ECB_MASSmeasures_PEAK_WET_MASS.csv")
 ```
 
 ### Dataset: data2 thru data5
@@ -64,8 +64,6 @@ ggplot(data=data2,aes(x=day,y=co2massmin,group=treat, color=treat))+
   scale_color_manual(values=c("1"="pink","2"="black"))+
   ggtitle("Change in CO2 Production")+
   ylab("Wet Mass")+xlab("Day")  
-
-
 
 
 ## Plot of CO2 production of each strain in short day conditions 
@@ -125,10 +123,10 @@ ggplot(data=data5,aes(x=day,y=co2massmin,group=treat,color=treat))+
   ylab("Wet Mass")+xlab("Day")
   
 
-write.csv(data2, "~/GitHub/ECB_mass_measures/data/processed/data1_ECB_MASSmeasures_PEAK_WET_MASS.csv")
-write.csv(data3, "~/GitHub/ECB_mass_measures/data/processed/data1_ECB_MASSmeasures_PEAK_WET_MASS.csv")
-write.csv(data4, "~/GitHub/ECB_mass_measures/data/processed/data1_ECB_MASSmeasures_PEAK_WET_MASS.csv")
-write.csv(data5, "~/GitHub/ECB_mass_measures/data/processed/data1_ECB_MASSmeasures_PEAK_WET_MASS.csv")
+write.csv(data2, "/Users/JamesB/Google Drive/Graduate School/Self_JamesTBrown/GitHub/ECB_mass_measures/data/processed/data1_ECB_MASSmeasures_PEAK_WET_MASS.csv")
+write.csv(data3, "/Users/JamesB/Google Drive/Graduate School/Self_JamesTBrown/GitHub/ECB_mass_measures/data/processed/data1_ECB_MASSmeasures_PEAK_WET_MASS.csv")
+write.csv(data4, "/Users/JamesB/Google Drive/Graduate School/Self_JamesTBrown/GitHub/ECB_mass_measures/data/processed/data1_ECB_MASSmeasures_PEAK_WET_MASS.csv")
+write.csv(data5, "/Users/JamesB/Google Drive/Graduate School/Self_JamesTBrown/GitHub/ECB_mass_measures/data/processed/data1_ECB_MASSmeasures_PEAK_WET_MASS.csv")
 ```
 
 ```{r}

@@ -26,8 +26,7 @@ library(plyr)
 
 #############--------------Read in the data-----------------######################
 #PC
-setwd("/Users/jbrown/Documents/GitHub/Respirometry/Data")
-data=read_excel("Respir.xlsx")
+data <- read_excel("/Users/jbrown/Documents/GitHub/ECB_mass_measures/data/raw/Respirometry/Respir.xlsx", sheet = "Sheet1")
 
 #data=read_excel("/Users/JamesB/Google Drive/Graduate School/Self_JamesTBrown/GitHub/Rearing/Data/respir_pupa data.xlsx", sheet = "Sheet1")
 str(data)

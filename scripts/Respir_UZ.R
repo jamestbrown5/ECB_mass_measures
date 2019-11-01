@@ -6,12 +6,13 @@ editor_options:
 chunk_output_type: console
 ---
 #Libraries and Reading in Data
+  
 ````{r}
 library(readxl)
 library(ggplot2)
 
 ##Read in the data
-data <- read_excel("/Users/JamesB/Google Drive/Graduate School/Self_JamesTBrown/GitHub/Respirometry/Data/Respir.xlsx", sheet = "Sheet1")
+data <- read_excel("/Users/jbrown/Documents/GitHub/ECB_mass_measures/data/raw/Respirometry/Respir.xlsx", sheet = "Sheet1")
 
 ##Remove (read:subset) "Blank Control" syringes using exclaimation point
 data2=subset(data,data$strain!="BE")
